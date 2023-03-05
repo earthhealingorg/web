@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers"
-import { formatEther, parseEther } from "ethers/lib/utils.js"
+import { formatEther } from "ethers/lib/utils.js"
 import { FC, MouseEventHandler } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { BiDownArrowAlt } from "react-icons/bi"
@@ -14,13 +14,9 @@ import {
   useVaultWithdraw,
 } from "@/hooks/useVault"
 
-import {
-  TokenBalance,
-  TokenSymbol,
-  UsdValueEth,
-  UsdValuePsp,
-} from "@/components"
+import { TokenSymbol, UsdValueEth, UsdValuePsp } from "@/components"
 import { Button } from "@/components/Button"
+import { TokenInput } from "@/components/forms/TokenInput"
 
 import { PEPE_ADDRESS, STETH_ADDRESS } from "@/constants"
 
@@ -115,61 +111,14 @@ export const Swap: FC = () => {
       </header>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="relative">
-          {/* input token + amount */}
-          <div className="relative mb-2 grid grid-cols-[1fr,auto] grid-rows-[1fr,auto] gap-y-1">
-            <input
-              type="text"
-              className="peer relative z-10 col-start-1 row-start-1 w-full bg-transparent px-4 pt-3 pb-1 text-3xl placeholder:text-black focus:outline-none"
-              placeholder="0.0"
-              {...form.register("inputAmount", {
-                validate: (valueString) => {
-                  const value = Number(valueString)
-                  if (isNaN(value) || valueString === "")
-                    return "Enter an amount"
-                  const valueSafe = String(value.toFixed(18))
-                  const valueParsed = parseEther(valueSafe)
-                  if (
-                    (inputTokenBalance?.value ?? BigNumber.from(0)).lt(
-                      valueParsed
-                    )
-                  )
-                    return "Insufficient balance"
-                  if (valueParsed.lte(BigNumber.from(0)))
-                    return "Enter an amount"
-                  return true
-                },
-              })}
-            />
-            <div className="relative z-10 col-start-2 row-start-1 flex items-center pr-3">
-              <span className="mt-2 rounded-md bg-slate-300 px-3 py-1.5 font-bold">
-                <TokenSymbol address={inputTokenAddr} />
-              </span>
-            </div>
-            <div className="relative z-10 col-span-full col-start-1 row-start-2 flex items-center justify-between px-4 pb-2">
-              <div>
-                {isDeposit ? (
-                  <UsdValueEth amount={form.watch("inputAmount")} />
-                ) : (
-                  <UsdValuePsp amount={form.watch("inputAmount")} />
-                )}
-              </div>
-              <div className="text-sm">
-                <span>Balance:</span> <TokenBalance address={inputTokenAddr} />{" "}
-                (
-                <button className="underline" onClick={onClickMax}>
-                  Max
-                </button>
-                )
-              </div>
-            </div>
-            {/* focus styles */}
-            <div
-              className="relative z-0 col-span-full col-start-1 row-span-full row-start-1 rounded-lg bg-slate-200 content-[''] peer-focus:ring-2 peer-focus:ring-inset peer-focus:ring-blue-500"
-              aria-hidden="true"
-            >
-              &nbsp;
-            </div>
-          </div>
+          <TokenInput
+            address={inputTokenAddr}
+            control={form.control}
+            isDeposit={isDeposit}
+            name="inputAmount"
+            onClickMax={onClickMax}
+            revalidateForm={form.trigger}
+          />
 
           {/* output token + amount */}
           <div className="relative grid grid-cols-[1fr,auto] grid-rows-[1fr,auto] gap-y-1">
