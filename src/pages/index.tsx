@@ -1,15 +1,24 @@
+import Link from "next/link"
 import * as React from "react"
 
-import { Layout, Seo } from "@/components"
+import { Seo } from "@/components"
+import { Header } from "@/components/Header"
 
 export default function HomePage() {
   return (
-    <Layout>
+    <>
       <Seo />
 
+      <Header />
+
       <main>
-        <div className="layout">Home</div>
+        <div className="layout">
+          <h1>Home</h1>
+          <Link href="/dashboard" className="underline">
+            Dashboard
+          </Link>
+        </div>
       </main>
-    </Layout>
+    </>
   )
 }

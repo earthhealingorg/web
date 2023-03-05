@@ -1,13 +1,16 @@
 import * as React from "react"
 
-import { Layout, Seo } from "@/components"
+import { Seo } from "@/components"
+import { Header } from "@/components/Header"
 
 export default function NotFoundPage() {
   return (
-    <Layout>
+    <>
       <Seo templateTitle="Not Found" />
 
+      <Header />
+
       <main>404</main>
-    </Layout>
+    </>
   )
 }
