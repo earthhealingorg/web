@@ -1,5 +1,6 @@
 export * from "./AppProviders"
 export * from "./Chart"
+export * from "./Chrt"
 export * from "./forms"
 export * from "./Header"
 export * from "./Seo"

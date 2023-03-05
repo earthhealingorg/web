@@ -10,30 +10,11 @@ import {
 } from "recharts"
 
 const data = []
-// const tvl =(useVaultTotalAssets(BigNumber(0)))
-// const midpoint = useGetCurveShape(tvl);
-// const makeData = () => {
-
-//   const upperbound = midpoint * 2;
-//   for (let i = 0; i < 10; i++){
-//     let multiplier = i * upperbound
-//     data.push({ether: multiplier, tokens: "", price: ""})
-//   }
-// }
-// makeData()
-// // data.forEach(setUpData);
-// // const datapoints = () => {
-// //todos
-// //query current balance
-
-// //double the balance to establish a range
-
-// //make 10 reads of expected token supply and price at levels spread via the range
-
-// // }
-// // const setUpData = (datapoints) => {
-// // data.push({ether: datapoints})
-// // };
+//todo fix to ensure it calls the useGetCurveShape(val) for each interval
+for (let i = 0; i < 1000; i++) {
+  let numAt = 100 / (1 + Math.exp(-0.02 * (i - 400)))
+  data.push({ ether: numAt })
+}
 
 export default class Chrt extends PureComponent {
   static demoUrl = "https://codesandbox.io/s/simple-area-chart-4ujxw"
