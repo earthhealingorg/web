@@ -9,23 +9,31 @@ import {
   YAxis,
 } from "recharts"
 
-const data = [
-  { uv: 1, tokens: 1, price: 1 },
-  { uv: 20, tokens: 20, price: 20 },
-]
-// data.forEach(setUpData);
-// const datapoints = () => {
-//todos
-//query current balance
+const data = []
+// const tvl =(useVaultTotalAssets(BigNumber(0)))
+// const midpoint = useGetCurveShape(tvl);
+// const makeData = () => {
 
-//double the balance to establish a range
-
-//make 10 reads of expected token supply and price at levels spread via the range
-
+//   const upperbound = midpoint * 2;
+//   for (let i = 0; i < 10; i++){
+//     let multiplier = i * upperbound
+//     data.push({ether: multiplier, tokens: "", price: ""})
+//   }
 // }
-// const setUpData = (datapoints) => {
-// data.push({uv: datapoints})
-// };
+// makeData()
+// // data.forEach(setUpData);
+// // const datapoints = () => {
+// //todos
+// //query current balance
+
+// //double the balance to establish a range
+
+// //make 10 reads of expected token supply and price at levels spread via the range
+
+// // }
+// // const setUpData = (datapoints) => {
+// // data.push({ether: datapoints})
+// // };
 
 export default class Chrt extends PureComponent {
   static demoUrl = "https://codesandbox.io/s/simple-area-chart-4ujxw"
@@ -48,7 +56,12 @@ export default class Chrt extends PureComponent {
           <XAxis dataKey="name" />
           <YAxis />
           <Tooltip />
-          <Area type="monotone" dataKey="uv" stroke="#276E00" fill="#BFF163" />
+          <Area
+            type="monotone"
+            dataKey="ether"
+            stroke="#276E00"
+            fill="#BFF163"
+          />
         </AreaChart>
       </ResponsiveContainer>
     )
