@@ -48,7 +48,7 @@ export default class Chrt extends PureComponent {
           <XAxis dataKey="name" />
           <YAxis />
           <Tooltip />
-          <Area type="monotone" dataKey="uv" stroke="#276E00" fill="#40870D" />
+          <Area type="monotone" dataKey="uv" stroke="#276E00" fill="#BFF163" />
         </AreaChart>
       </ResponsiveContainer>
     )
