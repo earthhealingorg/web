@@ -4,6 +4,6 @@
 
 @layer base {
   .layout {
-    @apply mx-auto w-[56rem] px-3;
+    @apply mx-auto w-11/12 max-w-[56rem];
   }
 }

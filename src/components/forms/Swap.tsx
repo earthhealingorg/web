@@ -126,7 +126,7 @@ export const Swap: FC = () => {
           <div className="relative mb-2 grid grid-cols-[1fr,auto] grid-rows-[1fr,auto] gap-y-1">
             <input
               type="text"
-              className="peer relative z-10 col-start-1 row-start-1 bg-transparent px-4 pt-3 pb-1 text-3xl focus:outline-none"
+              className="peer relative z-10 col-start-1 row-start-1 w-full bg-transparent px-4 pt-3 pb-1 text-3xl focus:outline-none"
               placeholder="0.0"
               {...form.register("inputAmount", {
                 onChange: (e) => {
@@ -198,7 +198,7 @@ export const Swap: FC = () => {
           <div className="relative grid grid-cols-[1fr,auto] grid-rows-[1fr,auto] gap-y-1">
             <input
               type="text"
-              className="peer relative z-10 col-start-1 row-start-1 bg-transparent px-4 pt-3 pb-1 text-3xl focus:outline-none"
+              className="peer relative z-10 col-start-1 row-start-1 w-full bg-transparent px-4 pt-3 pb-1 text-3xl focus:outline-none"
               placeholder="0.0"
               {...form.register("outputAmount", {
                 onChange: (e) => {

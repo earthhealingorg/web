@@ -11,8 +11,8 @@ type HeaderProps = { enableStats?: boolean; enableWallet?: boolean }
 
 export const Header: FC<HeaderProps> = ({ enableStats, enableWallet }) => {
   return (
-    <header className="layout mt-6 mb-9 flex items-center justify-between">
-      <div className="flex gap-9">
+    <header className="layout mt-6 mb-9 max-md:text-center md:flex md:items-center md:justify-between">
+      <div className="inline-flex gap-9 max-md:mx-auto md:flex">
         <h1 className="text-xl leading-none">
           <Link href="/">
             Positive Sum <span className="line-through">Ponzi</span>
@@ -20,13 +20,17 @@ export const Header: FC<HeaderProps> = ({ enableStats, enableWallet }) => {
           </Link>
         </h1>
         {enableStats && (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 max-md:hidden">
             <Tvl />
             <Ratio />
           </div>
         )}
       </div>
-      {enableWallet && <ConnectButton showBalance={false} />}
+      {enableWallet && (
+        <div className="max-md:mt-6 max-md:flex max-md:justify-center">
+          <ConnectButton showBalance={false} />
+        </div>
+      )}
     </header>
   )
 }
