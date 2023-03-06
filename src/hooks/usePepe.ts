@@ -1,6 +1,5 @@
 import { parseEther } from "ethers/lib/utils.js"
 import {
-  useAccount,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
@@ -17,25 +16,20 @@ export function usePepeTotalAssets() {
   })
 }
 
-export function usePepeApproved({ amount }: { amount: string }) {
-  const { address } = useAccount()
-  const allowance = useContractRead({
-    abi: vaultAbi,
-    address: PEPE_ADDRESS,
-    functionName: "allowance",
-    args: [address ?? "0x", PEPE_ADDRESS],
-    enabled: !!address,
-  })
-  return address ? allowance.data?.gt(parseEther(amount)) : false
-}
-
-export function usePepeDepositApprove({ amount }: { amount: string }) {
-  const value = parseEther(amount)
+export function usePepeDeposit({
+  amount,
+  enabled,
+}: {
+  amount: string
+  enabled: boolean
+}) {
+  const value = parseEther(amount || "0")
   const prepare = usePrepareContractWrite({
     abi: vaultAbi,
     address: PEPE_ADDRESS,
-    functionName: "approve",
-    args: [PEPE_ADDRESS, value],
+    functionName: "deposit",
+    args: [value],
+    enabled,
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction(write.data?.hash)
@@ -45,13 +39,20 @@ export function usePepeDepositApprove({ amount }: { amount: string }) {
   }
 }
 
-export function usePepeDeposit({ amount }: { amount: string }) {
-  const value = parseEther(amount)
+export function usePepeWithdraw({
+  amount,
+  enabled,
+}: {
+  amount: string
+  enabled: boolean
+}) {
+  const value = parseEther(amount || "0")
   const prepare = usePrepareContractWrite({
     abi: vaultAbi,
     address: PEPE_ADDRESS,
     functionName: "deposit",
     args: [value],
+    enabled,
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction(write.data?.hash)

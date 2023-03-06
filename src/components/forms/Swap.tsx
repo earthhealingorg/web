@@ -5,7 +5,13 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import { BiDownArrowAlt } from "react-icons/bi"
 import { Address } from "wagmi"
 
-import { usePepeToEthRatio, useUserBalance } from "@/hooks"
+import {
+  usePepeDeposit,
+  usePepeToEthRatio,
+  usePepeWithdraw,
+  useUserBalance,
+} from "@/hooks"
+import { useTokenApprove, useTokenApproved } from "@/hooks/useTokenApproval"
 
 import {
   TokenBalance,
@@ -13,6 +19,7 @@ import {
   UsdValueEth,
   UsdValuePsp,
 } from "@/components"
+import { Button } from "@/components/Button"
 
 import { PEPE_ADDRESS, STETH_ADDRESS } from "@/constants"
 
@@ -35,6 +42,8 @@ export const Swap: FC = () => {
     reValidateMode: "onChange",
   })
 
+  const isDeposit = form.watch("inputToken") === STETH_ADDRESS
+  const inputAmount = form.watch("inputAmount")
   const inputTokenAddr = form.watch("inputToken")
   const outputTokenAddr = form.watch("outputToken")
 
@@ -83,25 +92,10 @@ export const Swap: FC = () => {
     })
   }
 
-  const onSubmit: SubmitHandler<SwapFormValues> = ({
-    inputAmount,
-    inputToken,
-    outputAmount,
-    outputToken,
-  }) => {
-    // eslint-disable-next-line no-console
-    console.log("Swapping", {
-      inputAmount,
-      inputToken,
-      outputAmount,
-      outputToken,
-    })
-  }
-
   const getOutputForInput = (valueString?: string) => {
     const value = Number(valueString)
     if (isNaN(value)) return "0.0"
-    return form.getValues("inputToken") === STETH_ADDRESS
+    return isDeposit
       ? String(value * pspToEthRatio)
       : String(value / pspToEthRatio)
   }
@@ -109,9 +103,40 @@ export const Swap: FC = () => {
   const getInputForOutput = (valueString?: string) => {
     const value = Number(valueString)
     if (isNaN(value)) return "0.0"
-    return form.getValues("inputToken") === STETH_ADDRESS
+    return isDeposit
       ? String(value / pspToEthRatio)
       : String(value * pspToEthRatio)
+  }
+
+  const isApproved = useTokenApproved({
+    address: inputTokenAddr,
+    amount: inputAmount,
+    spender: PEPE_ADDRESS,
+  })
+  const writeApprove = useTokenApprove({
+    address: inputTokenAddr,
+    amount: inputAmount,
+    spender: PEPE_ADDRESS,
+  })
+  const writeDeposit = usePepeDeposit({
+    amount: inputAmount,
+    enabled: isDeposit && isApproved,
+  })
+  const writeWithdraw = usePepeWithdraw({
+    amount: inputAmount,
+    enabled: !isDeposit && isApproved,
+  })
+
+  const onSubmit: SubmitHandler<SwapFormValues> = () => {
+    if (!isApproved) {
+      writeApprove.write?.()
+      return
+    }
+    if (isDeposit) {
+      writeDeposit.write?.()
+      return
+    }
+    writeWithdraw.write?.()
   }
 
   return (
@@ -168,7 +193,7 @@ export const Swap: FC = () => {
             </div>
             <div className="relative z-10 col-span-full col-start-1 row-start-2 flex items-center justify-between px-4 pb-2">
               <div>
-                {inputTokenAddr === STETH_ADDRESS ? (
+                {isDeposit ? (
                   <UsdValueEth amount={form.watch("inputAmount")} />
                 ) : (
                   <UsdValuePsp amount={form.watch("inputAmount")} />
@@ -227,7 +252,7 @@ export const Swap: FC = () => {
               </span>
             </div>
             <div className="relative z-10 col-span-full col-start-1 row-start-2 flex items-center justify-between px-4 pb-2">
-              {outputTokenAddr === STETH_ADDRESS ? (
+              {!isDeposit ? (
                 <UsdValueEth amount={form.watch("inputAmount")} />
               ) : (
                 <UsdValuePsp amount={form.watch("inputAmount")} />
@@ -251,8 +276,12 @@ export const Swap: FC = () => {
           </button>
         </div>
 
-        <button
-          className="not-disabled:bg-blue-500 mt-2 w-full rounded-lg py-2 text-xl font-bold text-white disabled:bg-slate-400"
+        <Button
+          isLoading={
+            writeApprove.isLoading ||
+            writeDeposit.isLoading ||
+            writeWithdraw.isLoading
+          }
           disabled={!form.formState.isValid}
         >
           {form.formState.isDirty
@@ -260,7 +289,7 @@ export const Swap: FC = () => {
               ? "Swap"
               : form.formState.errors.inputAmount?.message ?? "Enter an amount"
             : "Enter an amount"}
-        </button>
+        </Button>
       </form>
     </div>
   )
