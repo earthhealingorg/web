@@ -1,9 +1,11 @@
-import { useFakeQuery } from "@/hooks/useFakeQuery"
+import { useEthPrice } from "@/hooks/useEthPrice"
+import { usePspToEthRatio } from "@/hooks/usePspToEthRatio"
 
 export const usePspPrice = () => {
-  const query = useFakeQuery()
+  const { data: ethPrice, ...ethPriceQuery } = useEthPrice()
+  const { data: pspToEthRatio, ...pspToEthRatioQuery } = usePspToEthRatio()
   return {
-    ...query,
-    data: "0.012 stETH",
+    data: ethPrice * pspToEthRatio,
+    isLoading: ethPriceQuery.isLoading || pspToEthRatioQuery.isLoading,
   }
 }
