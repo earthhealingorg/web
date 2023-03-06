@@ -45,7 +45,16 @@ export const Swap: FC = () => {
   })
 
   const onClickMax: MouseEventHandler<HTMLButtonElement> = () => {
-    form.setValue("inputAmount", inputTokenBalance?.formatted ?? "0.0")
+    if (inputTokenBalance?.value.eq(0)) return
+    form.setValue("inputAmount", inputTokenBalance?.formatted ?? "0.0", {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    })
+    form.setValue(
+      "outputAmount",
+      getOutputForInput(inputTokenBalance?.formatted)
+    )
   }
 
   const onClickSwitch: MouseEventHandler<HTMLButtonElement> = () => {
@@ -90,6 +99,22 @@ export const Swap: FC = () => {
     })
   }
 
+  const getOutputForInput = (valueString?: string) => {
+    const value = Number(valueString)
+    if (isNaN(value)) return "0.0"
+    return form.getValues("inputToken") === STETH_ADDRESS
+      ? String(value * pspToEthRatio)
+      : String(value / pspToEthRatio)
+  }
+
+  const getInputForOutput = (valueString?: string) => {
+    const value = Number(valueString)
+    if (isNaN(value)) return "0.0"
+    return form.getValues("inputToken") === STETH_ADDRESS
+      ? String(value / pspToEthRatio)
+      : String(value * pspToEthRatio)
+  }
+
   return (
     <div className="rounded-xl bg-slate-100 p-3">
       <header className="mx-1 mb-2">
@@ -105,13 +130,15 @@ export const Swap: FC = () => {
               placeholder="0.0"
               {...form.register("inputAmount", {
                 onChange: (e) => {
-                  const value = Number(e.target.value)
-                  if (isNaN(value)) return
-                  if (form.getValues("inputToken") === STETH_ADDRESS) {
-                    form.setValue("outputAmount", String(value * pspToEthRatio))
-                  } else {
-                    form.setValue("outputAmount", String(value / pspToEthRatio))
-                  }
+                  form.setValue(
+                    "outputAmount",
+                    getOutputForInput(e.target.value),
+                    {
+                      shouldDirty: true,
+                      shouldTouch: true,
+                      shouldValidate: true,
+                    }
+                  )
                 },
                 validate: (valueString) => {
                   const value = Number(valueString)
@@ -175,13 +202,15 @@ export const Swap: FC = () => {
               placeholder="0.0"
               {...form.register("outputAmount", {
                 onChange: (e) => {
-                  const value = Number(e.target.value)
-                  if (isNaN(value)) return
-                  if (form.getValues("inputToken") === STETH_ADDRESS) {
-                    form.setValue("inputAmount", String(value / pspToEthRatio))
-                  } else {
-                    form.setValue("inputAmount", String(value * pspToEthRatio))
-                  }
+                  form.setValue(
+                    "inputAmount",
+                    getInputForOutput(e.target.value),
+                    {
+                      shouldDirty: true,
+                      shouldTouch: true,
+                      shouldValidate: true,
+                    }
+                  )
                 },
                 validate: (valueString) => {
                   const value = Number(valueString)
@@ -221,7 +250,7 @@ export const Swap: FC = () => {
         </div>
 
         <button
-          className="not-disabled:bg-blue-500 mt-2 w-full rounded-lg bg-slate-500 py-2 text-xl font-bold text-white"
+          className="not-disabled:bg-blue-500 mt-2 w-full rounded-lg py-2 text-xl font-bold text-white disabled:bg-slate-400"
           disabled={!form.formState.isValid}
         >
           {form.formState.isDirty
