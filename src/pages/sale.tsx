@@ -1,6 +1,6 @@
 import { NextPage } from "next"
 
-import { AppProviders, Header, Seo } from "@/components"
+import { AppProviders, Header, Sale, Seo } from "@/components"
 
 const SalePage: NextPage = () => {
   return (
@@ -10,7 +10,17 @@ const SalePage: NextPage = () => {
       <Header enableWallet />
 
       <main>
-        <div className="layout">Sale</div>
+        <div className="layout">
+          <div className="mx-auto w-full max-w-md">
+            <div>
+              <h1 className="text-2xl font-bold">Sale</h1>
+              <p>Total deposits will be...</p>
+            </div>
+            <div className="mt-3">
+              <Sale />
+            </div>
+          </div>
+        </div>
       </main>
     </AppProviders>
   )
