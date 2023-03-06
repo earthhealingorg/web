@@ -130,15 +130,19 @@ export const Swap: FC = () => {
               placeholder="0.0"
               {...form.register("inputAmount", {
                 onChange: (e) => {
-                  form.setValue(
-                    "outputAmount",
-                    getOutputForInput(e.target.value),
-                    {
-                      shouldDirty: true,
-                      shouldTouch: true,
-                      shouldValidate: true,
-                    }
-                  )
+                  if (e.target.value === "") {
+                    form.reset()
+                  } else {
+                    form.setValue(
+                      "outputAmount",
+                      getOutputForInput(e.target.value),
+                      {
+                        shouldDirty: true,
+                        shouldTouch: true,
+                        shouldValidate: true,
+                      }
+                    )
+                  }
                 },
                 validate: (valueString) => {
                   const value = Number(valueString)
@@ -202,15 +206,19 @@ export const Swap: FC = () => {
               placeholder="0.0"
               {...form.register("outputAmount", {
                 onChange: (e) => {
-                  form.setValue(
-                    "inputAmount",
-                    getInputForOutput(e.target.value),
-                    {
-                      shouldDirty: true,
-                      shouldTouch: true,
-                      shouldValidate: true,
-                    }
-                  )
+                  if (e.target.value === "") {
+                    form.reset()
+                  } else {
+                    form.setValue(
+                      "inputAmount",
+                      getInputForOutput(e.target.value),
+                      {
+                        shouldDirty: true,
+                        shouldTouch: true,
+                        shouldValidate: true,
+                      }
+                    )
+                  }
                 },
                 validate: (valueString) => {
                   const value = Number(valueString)
