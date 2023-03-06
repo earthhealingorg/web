@@ -14,7 +14,7 @@ import {
   UsdValuePsp,
 } from "@/components"
 
-import { PSP_ADDRESS, STETH_ADDRESS } from "@/constants"
+import { PEPE_ADDRESS, STETH_ADDRESS } from "@/constants"
 
 type SwapFormValues = {
   inputAmount: string
@@ -29,7 +29,7 @@ export const Swap: FC = () => {
       inputAmount: "",
       inputToken: STETH_ADDRESS,
       outputAmount: "",
-      outputToken: PSP_ADDRESS,
+      outputToken: PEPE_ADDRESS,
     },
     mode: "all",
     reValidateMode: "onChange",

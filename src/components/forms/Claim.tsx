@@ -5,30 +5,30 @@ import { useClientLoadingState, useEthPrice, usePspToEthRatio } from "@/hooks"
 import { Skeleton } from "@/components/Skeleton"
 import { TokenBalance } from "@/components/token"
 
-import { PSP_ADDRESS } from "@/constants"
+import { PEPE_ADDRESS } from "@/constants"
 
 export const Claim: FC = () => {
   return (
     <div>
-      <h1 className="mx-1 mb-1 text-lg font-bold">PSP</h1>
+      <h1 className="mx-1 mb-1 text-lg font-bold">PEPE</h1>
       <dl className="mx-1 mb-3 grid grid-cols-[auto,1fr] gap-x-3">
-        <dt>PSP</dt>
+        <dt>PEPE</dt>
         <dd className="text-right font-bold">
           <PspRatio />
         </dd>
-        <dt>PSP</dt>
+        <dt>PEPE</dt>
         <dd className="text-right font-bold">
           <PspPriceUsd />
         </dd>
-        <dt>My PSP</dt>
+        <dt>My PEPE</dt>
         <dd className="text-right font-bold">
-          <TokenBalance address={PSP_ADDRESS} />
+          <TokenBalance address={PEPE_ADDRESS} />
         </dd>
-        <dt>vePSP</dt>
+        <dt>pePEPE</dt>
         <dd className="text-right font-bold">
           <VePsp />
         </dd>
-        <dt>PSP locked</dt>
+        <dt>PEPE locked</dt>
         <dd className="text-right font-bold">
           <PspLocked />
         </dd>

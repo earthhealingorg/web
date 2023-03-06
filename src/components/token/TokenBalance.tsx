@@ -1,8 +1,7 @@
 import { FC } from "react"
 import { Address, useAccount, useBalance } from "wagmi"
 
-import { useClientLoadingState } from "@/hooks/useClientLoadingState"
-import { useIsClientReady } from "@/hooks/useIsClientReady"
+import { useClientLoadingState, useIsClientReady } from "@/hooks"
 
 import { Skeleton } from "@/components/Skeleton"
 

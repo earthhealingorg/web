@@ -2,7 +2,8 @@ import { ConnectButton } from "@rainbow-me/rainbowkit"
 import Link from "next/link"
 import { FC } from "react"
 
-import { useClientLoadingState, usePspToEthRatio, useTvl } from "@/hooks"
+import { useClientLoadingState, usePspToEthRatio } from "@/hooks"
+import { useTotalDeposited } from "@/hooks/useReads"
 
 import { Skeleton } from "@/components"
 
@@ -31,7 +32,7 @@ export const Header: FC<HeaderProps> = ({ enableStats, enableWallet }) => {
 }
 
 const Tvl: FC = () => {
-  const { data: tvl, ...tvlQuery } = useTvl()
+  const { data: tvl, ...tvlQuery } = useTotalDeposited()
   const isLoading = useClientLoadingState(tvlQuery)
   return (
     <dl className="flex items-baseline gap-1.5 rounded-lg bg-lime-300 px-4 py-1.5">

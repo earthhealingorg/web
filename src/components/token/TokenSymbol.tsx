@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { Address, useToken } from "wagmi"
 
-import { useClientLoadingState } from "@/hooks/useClientLoadingState"
+import { useClientLoadingState } from "@/hooks"
 
 import { Skeleton } from "@/components/Skeleton"
 
