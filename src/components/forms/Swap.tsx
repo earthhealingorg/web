@@ -1,11 +1,11 @@
 import { BigNumber } from "ethers"
-import { parseUnits } from "ethers/lib/utils.js"
+import { parseEther } from "ethers/lib/utils.js"
 import { FC, MouseEventHandler } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { BiDownArrowAlt } from "react-icons/bi"
-import { Address, useToken } from "wagmi"
+import { Address } from "wagmi"
 
-import { usePspToEthRatio, useUserBalance } from "@/hooks"
+import { usePepeToEthRatio, useUserBalance } from "@/hooks"
 
 import {
   TokenBalance,
@@ -38,8 +38,7 @@ export const Swap: FC = () => {
   const inputTokenAddr = form.watch("inputToken")
   const outputTokenAddr = form.watch("outputToken")
 
-  const { data: pspToEthRatio } = usePspToEthRatio()
-  const { data: inputToken } = useToken({ address: inputTokenAddr })
+  const { data: pspToEthRatio } = usePepeToEthRatio()
   const { data: inputTokenBalance } = useUserBalance({
     address: inputTokenAddr,
   })
@@ -148,13 +147,8 @@ export const Swap: FC = () => {
                   const value = Number(valueString)
                   if (isNaN(value) || valueString === "")
                     return "Enter an amount"
-                  const valueSafe = String(
-                    value.toFixed(inputToken?.decimals ?? 18)
-                  )
-                  const valueParsed = parseUnits(
-                    valueSafe,
-                    inputToken?.decimals ?? 18
-                  )
+                  const valueSafe = String(value.toFixed(18))
+                  const valueParsed = parseEther(valueSafe)
                   if (
                     (inputTokenBalance?.value ?? BigNumber.from(0)).lt(
                       valueParsed

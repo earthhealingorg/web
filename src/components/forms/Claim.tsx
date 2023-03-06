@@ -1,6 +1,6 @@
 import { FC } from "react"
 
-import { useClientLoadingState, useEthPrice, usePspToEthRatio } from "@/hooks"
+import { useClientLoadingState, useEthPrice, usePepeToEthRatio } from "@/hooks"
 
 import { Skeleton } from "@/components/Skeleton"
 import { TokenBalance } from "@/components/token"
@@ -14,11 +14,11 @@ export const Claim: FC = () => {
       <dl className="mx-1 mb-3 grid grid-cols-[auto,1fr] gap-x-3">
         <dt>PEPE</dt>
         <dd className="text-right font-bold">
-          <PspRatio />
+          <PepeRatio />
         </dd>
         <dt>PEPE</dt>
         <dd className="text-right font-bold">
-          <PspPriceUsd />
+          <PepePriceUsd />
         </dd>
         <dt>My PEPE</dt>
         <dd className="text-right font-bold">
@@ -26,11 +26,11 @@ export const Claim: FC = () => {
         </dd>
         <dt>pePEPE</dt>
         <dd className="text-right font-bold">
-          <VePsp />
+          <VePepe />
         </dd>
         <dt>PEPE locked</dt>
         <dd className="text-right font-bold">
-          <PspLocked />
+          <PepeLocked />
         </dd>
         <dt>Time remaining</dt>
         <dd className="text-right font-bold">
@@ -46,33 +46,33 @@ export const Claim: FC = () => {
   )
 }
 
-const PspRatio: FC = () => {
-  const { data: pspRatio, ...pspRatioQuery } = usePspToEthRatio()
-  const isLoading = useClientLoadingState(pspRatioQuery)
+const PepeRatio: FC = () => {
+  const { data: pepeRatio, ...pepeRatioQuery } = usePepeToEthRatio()
+  const isLoading = useClientLoadingState(pepeRatioQuery)
   return (
     <Skeleton isLoading={isLoading}>
-      {isLoading ? "Loading..." : `${pspRatio} stETH`}
+      {isLoading ? "Loading..." : `${pepeRatio} stETH`}
     </Skeleton>
   )
 }
 
-const PspPriceUsd: FC = () => {
+const PepePriceUsd: FC = () => {
   const { data: ethPrice, ...ethPriceQuery } = useEthPrice()
-  const { data: pspToEthRatio, ...pspToEthRatioQuery } = usePspToEthRatio()
-  const isLoading = useClientLoadingState(ethPriceQuery, pspToEthRatioQuery)
+  const { data: pepeToEthRatio, ...pepeToEthRatioQuery } = usePepeToEthRatio()
+  const isLoading = useClientLoadingState(ethPriceQuery, pepeToEthRatioQuery)
   return (
     <Skeleton isLoading={isLoading}>
-      {isLoading ? "Loading..." : `$${ethPrice * pspToEthRatio}`}
+      {isLoading ? "Loading..." : `$${ethPrice * pepeToEthRatio}`}
     </Skeleton>
   )
 }
 
-const VePsp: FC = () => {
+const VePepe: FC = () => {
   // TODO: Implementation
   return <Skeleton isLoading={false}>TODO</Skeleton>
 }
 
-const PspLocked: FC = () => {
+const PepeLocked: FC = () => {
   // TODO: Implementation
   return <Skeleton isLoading={false}>TODO</Skeleton>
 }

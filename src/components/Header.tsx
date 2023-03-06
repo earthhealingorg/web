@@ -1,9 +1,13 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit"
+import { formatEther } from "ethers/lib/utils.js"
 import Link from "next/link"
 import { FC } from "react"
 
-import { useClientLoadingState, usePspToEthRatio } from "@/hooks"
-import { useTotalDeposited } from "@/hooks/useReads"
+import {
+  useClientLoadingState,
+  usePepeToEthRatio,
+  usePepeTotalAssets,
+} from "@/hooks"
 
 import { Skeleton } from "@/components"
 
@@ -36,14 +40,14 @@ export const Header: FC<HeaderProps> = ({ enableStats, enableWallet }) => {
 }
 
 const Tvl: FC = () => {
-  const { data: tvl, ...tvlQuery } = useTotalDeposited()
+  const { data: tvl, ...tvlQuery } = usePepeTotalAssets()
   const isLoading = useClientLoadingState(tvlQuery)
   return (
     <dl className="flex items-baseline gap-1.5 rounded-lg bg-lime-300 px-4 py-1.5">
       <dt className="text-sm">TVL</dt>
       <dd className="text-lg font-bold">
         <Skeleton isLoading={isLoading}>
-          {isLoading ? "Loading..." : tvl}
+          {isLoading ? "Loading..." : formatEther(tvl ?? 0)}
         </Skeleton>
       </dd>
     </dl>
@@ -51,7 +55,7 @@ const Tvl: FC = () => {
 }
 
 const Ratio: FC = () => {
-  const { data: pspToEthRatio, ...pspToEthRatioQuery } = usePspToEthRatio()
+  const { data: pspToEthRatio, ...pspToEthRatioQuery } = usePepeToEthRatio()
   const isLoading = useClientLoadingState(pspToEthRatioQuery)
   return (
     <dl className="flex items-baseline gap-1.5 rounded-lg bg-lime-300 px-4 py-1.5">

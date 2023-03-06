@@ -1,6 +1,6 @@
 import { FC } from "react"
 
-import { useClientLoadingState, useEthPrice, usePspToEthRatio } from "@/hooks"
+import { useClientLoadingState, useEthPrice, usePepeToEthRatio } from "@/hooks"
 
 import { Skeleton } from "@/components/Skeleton"
 
@@ -22,8 +22,7 @@ export const UsdValueEth: FC<UsdValueProps> = ({ amount }) => {
 
 export const UsdValuePsp: FC<UsdValueProps> = ({ amount }) => {
   const { data: ethPrice, ...ethPriceQuery } = useEthPrice()
-  // TODO: Pull ratio from contract
-  const { data: pspToEthRatio, ...pspToEthRatioQuery } = usePspToEthRatio()
+  const { data: pspToEthRatio, ...pspToEthRatioQuery } = usePepeToEthRatio()
   const isLoading = useClientLoadingState(ethPriceQuery, pspToEthRatioQuery)
   const numAmount = Number(amount)
   const absAmount = Math.abs(isNaN(numAmount) ? 0 : numAmount)

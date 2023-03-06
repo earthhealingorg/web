@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 
-import { usePspToEthRatio } from "@/hooks/useReads"
+import { usePepeToEthRatio } from "@/hooks/usePepeToEthRatio"
 
 export function useEthPrice() {
   return useQuery(["token-price", "eth"], {
@@ -16,7 +16,7 @@ export function useEthPrice() {
 
 export function usePspPrice() {
   const { data: ethPrice, ...ethPriceQuery } = useEthPrice()
-  const { data: pspToEthRatio, ...pspToEthRatioQuery } = usePspToEthRatio()
+  const { data: pspToEthRatio, ...pspToEthRatioQuery } = usePepeToEthRatio()
   return {
     data: ethPrice * pspToEthRatio,
     isLoading: ethPriceQuery.isLoading || pspToEthRatioQuery.isLoading,
