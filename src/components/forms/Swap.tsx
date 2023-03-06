@@ -5,13 +5,13 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import { BiDownArrowAlt } from "react-icons/bi"
 import { Address } from "wagmi"
 
+import { usePepeToEthRatio, useUserBalance } from "@/hooks"
+import { useIsTokenApproved, useTokenApprove } from "@/hooks/useTokenApproval"
 import {
-  usePepeDeposit,
-  usePepeToEthRatio,
-  usePepeWithdraw,
-  useUserBalance,
-} from "@/hooks"
-import { useTokenApprove, useTokenApproved } from "@/hooks/useTokenApproval"
+  useVaultDeposit,
+  useVaultPreview,
+  useVaultWithdraw,
+} from "@/hooks/useVault"
 
 import {
   TokenBalance,
@@ -108,7 +108,12 @@ export const Swap: FC = () => {
       : String(value * pspToEthRatio)
   }
 
-  const isApproved = useTokenApproved({
+  const preview = useVaultPreview({
+    address: PEPE_ADDRESS,
+    amount: inputAmount,
+    isDeposit,
+  })
+  const isApproved = useIsTokenApproved({
     address: inputTokenAddr,
     amount: inputAmount,
     spender: PEPE_ADDRESS,
@@ -118,14 +123,22 @@ export const Swap: FC = () => {
     amount: inputAmount,
     spender: PEPE_ADDRESS,
   })
-  const writeDeposit = usePepeDeposit({
+  const writeDeposit = useVaultDeposit({
+    address: PEPE_ADDRESS,
     amount: inputAmount,
     enabled: isDeposit && isApproved,
   })
-  const writeWithdraw = usePepeWithdraw({
+  const writeWithdraw = useVaultWithdraw({
+    address: PEPE_ADDRESS,
     amount: inputAmount,
     enabled: !isDeposit && isApproved,
   })
+
+  const errorMessage = preview.isError
+    ? "Error previewing"
+    : writeApprove.isError || writeDeposit.isError || writeWithdraw.isError
+    ? "Error preparing transaction"
+    : null
 
   const onSubmit: SubmitHandler<SwapFormValues> = () => {
     if (!isApproved) {
@@ -288,7 +301,7 @@ export const Swap: FC = () => {
             ? form.formState.isValid
               ? "Swap"
               : form.formState.errors.inputAmount?.message ?? "Enter an amount"
-            : "Enter an amount"}
+            : errorMessage ?? "Enter an amount"}
         </Button>
       </form>
     </div>

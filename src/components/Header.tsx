@@ -6,10 +6,12 @@ import { FC } from "react"
 import {
   useClientLoadingState,
   usePepeToEthRatio,
-  usePepeTotalAssets,
+  useVaultTotalAssets,
 } from "@/hooks"
 
 import { Skeleton } from "@/components"
+
+import { PEPE_ADDRESS } from "@/constants"
 
 type HeaderProps = { enableStats?: boolean; enableWallet?: boolean }
 
@@ -40,7 +42,9 @@ export const Header: FC<HeaderProps> = ({ enableStats, enableWallet }) => {
 }
 
 const Tvl: FC = () => {
-  const { data: tvl, ...tvlQuery } = usePepeTotalAssets()
+  const { data: tvl, ...tvlQuery } = useVaultTotalAssets({
+    address: PEPE_ADDRESS,
+  })
   const isLoading = useClientLoadingState(tvlQuery)
   return (
     <dl className="flex items-baseline gap-1.5 rounded-lg bg-lime-300 px-4 py-1.5">

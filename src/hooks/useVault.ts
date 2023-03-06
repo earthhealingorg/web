@@ -1,32 +1,57 @@
 import { parseEther } from "ethers/lib/utils.js"
 import {
+  Address,
+  erc4626ABI,
+  useAccount,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
 } from "wagmi"
 
-import { PEPE_ADDRESS, vaultAbi } from "@/constants"
+import { vaultAbi } from "@/constants"
 
-export function usePepeTotalAssets() {
+export function useVaultTotalAssets({ address }: { address: Address }) {
   return useContractRead({
     abi: vaultAbi,
-    address: PEPE_ADDRESS,
+    address,
     functionName: "totalAssets",
   })
 }
 
-export function usePepeDeposit({
+export function useVaultPreview({
+  address,
+  amount,
+  isDeposit,
+}: {
+  address: Address
+  amount: string
+  isDeposit: boolean
+}) {
+  const { address: receiver } = useAccount()
+  const value = parseEther(amount || "0")
+  return useContractRead({
+    abi: erc4626ABI,
+    address,
+    functionName: isDeposit ? "previewDeposit" : "previewWithdraw",
+    args: [value],
+    enabled: !!receiver && amount !== "" && amount !== "0",
+  })
+}
+
+export function useVaultDeposit({
+  address,
   amount,
   enabled,
 }: {
+  address: Address
   amount: string
   enabled: boolean
 }) {
   const value = parseEther(amount || "0")
   const prepare = usePrepareContractWrite({
     abi: vaultAbi,
-    address: PEPE_ADDRESS,
+    address,
     functionName: "deposit",
     args: [value],
     enabled,
@@ -34,29 +59,34 @@ export function usePepeDeposit({
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction(write.data?.hash)
   return {
+    isError: prepare.isError,
     isLoading: prepare.isLoading || write.isLoading || wait.isLoading,
     write: write.write,
   }
 }
 
-export function usePepeWithdraw({
+export function useVaultWithdraw({
+  address,
   amount,
   enabled,
 }: {
+  address: Address
   amount: string
   enabled: boolean
 }) {
+  const { address: receiver } = useAccount()
   const value = parseEther(amount || "0")
   const prepare = usePrepareContractWrite({
-    abi: vaultAbi,
-    address: PEPE_ADDRESS,
-    functionName: "deposit",
-    args: [value],
-    enabled,
+    abi: erc4626ABI,
+    address,
+    functionName: "withdraw",
+    args: [value, receiver ?? "0x", receiver ?? "0x"],
+    enabled: enabled && !!receiver,
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction(write.data?.hash)
   return {
+    isError: prepare.isError,
     isLoading: prepare.isLoading || write.isLoading || wait.isLoading,
     write: write.write,
   }

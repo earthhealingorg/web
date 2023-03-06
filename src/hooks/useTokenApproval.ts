@@ -9,7 +9,7 @@ import {
   useWaitForTransaction,
 } from "wagmi"
 
-export function useTokenApproved({
+export function useIsTokenApproved({
   address,
   amount,
   spender,
@@ -50,6 +50,7 @@ export function useTokenApprove({
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction(write.data?.hash)
   return {
+    isError: prepare.error,
     isLoading: prepare.isLoading || write.isLoading || wait.isLoading,
     write: write.write,
   }
