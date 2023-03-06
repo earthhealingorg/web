@@ -18,7 +18,7 @@ const Dashboard: NextPage = () => {
       <Header enableStats enableWallet />
 
       <main>
-        <div className="layout grid grid-cols-1 gap-6 md:grid-cols-[1fr,20rem] md:grid-rows-2">
+        <div className="layout grid grid-cols-1 gap-6 md:grid-cols-[1fr,minmax(1fr,20em)] md:grid-rows-2">
           <div className="md:col-start-1 md:row-start-1">
             <Chart />
           </div>
