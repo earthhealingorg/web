@@ -1,9 +1,9 @@
 import { useFakeQuery } from "@/hooks/useFakeQuery"
 
-export const usePrice = () => {
+export function usePspToEthRatio() {
   const query = useFakeQuery()
   return {
     ...query,
-    data: "0.012 stETH",
+    data: 0.6,
   }
 }
