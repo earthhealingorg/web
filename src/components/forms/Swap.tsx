@@ -2,7 +2,7 @@ import { BigNumber } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
 import { FC, MouseEventHandler } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
-import { BiCog, BiDownArrowAlt } from "react-icons/bi"
+import { BiDownArrowAlt } from "react-icons/bi"
 import { Address, useToken } from "wagmi"
 
 import { usePspToEthRatio, useUserBalance } from "@/hooks"
@@ -46,11 +46,6 @@ export const Swap: FC = () => {
 
   const onClickMax: MouseEventHandler<HTMLButtonElement> = () => {
     form.setValue("inputAmount", inputTokenBalance?.formatted ?? "0.0")
-  }
-
-  const onClickSettings: MouseEventHandler<HTMLButtonElement> = () => {
-    // eslint-disable-next-line no-console
-    console.log("settings clicked")
   }
 
   const onClickSwitch: MouseEventHandler<HTMLButtonElement> = () => {
@@ -97,12 +92,8 @@ export const Swap: FC = () => {
 
   return (
     <div className="rounded-xl bg-slate-100 p-3">
-      <header className="mx-1 mb-2 flex items-center justify-between text-lg">
-        <h1 className="font-bold">Swap</h1>
-        <button className="" onClick={onClickSettings}>
-          <BiCog className="h-5 w-5" />
-          <span className="sr-only">Transaction settings</span>
-        </button>
+      <header className="mx-1 mb-2">
+        <h1 className="text-lg font-bold">Swap</h1>
       </header>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="relative">
