@@ -1,11 +1,12 @@
 import { BigNumber } from "ethers"
-import { parseEther } from "ethers/lib/utils.js"
+import { formatEther, parseEther } from "ethers/lib/utils.js"
 import { FC, MouseEventHandler } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { BiDownArrowAlt } from "react-icons/bi"
 import { Address } from "wagmi"
 
-import { usePepeToEthRatio, useUserBalance } from "@/hooks"
+import { clsxm } from "@/lib"
+import { useUserBalance } from "@/hooks"
 import { useIsTokenApproved, useTokenApprove } from "@/hooks/useTokenApproval"
 import {
   useVaultDeposit,
@@ -26,8 +27,6 @@ import { PEPE_ADDRESS, STETH_ADDRESS } from "@/constants"
 type SwapFormValues = {
   inputAmount: string
   inputToken: Address
-  outputAmount: string
-  outputToken: Address
 }
 
 export const Swap: FC = () => {
@@ -35,8 +34,6 @@ export const Swap: FC = () => {
     defaultValues: {
       inputAmount: "",
       inputToken: STETH_ADDRESS,
-      outputAmount: "",
-      outputToken: PEPE_ADDRESS,
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -45,11 +42,11 @@ export const Swap: FC = () => {
   const isDeposit = form.watch("inputToken") === STETH_ADDRESS
   const inputAmount = form.watch("inputAmount")
   const inputTokenAddr = form.watch("inputToken")
-  const outputTokenAddr = form.watch("outputToken")
+  const outputTokenAddr = isDeposit ? PEPE_ADDRESS : STETH_ADDRESS
 
-  const { data: pspToEthRatio } = usePepeToEthRatio()
   const { data: inputTokenBalance } = useUserBalance({
     address: inputTokenAddr,
+    onSuccess: () => form.trigger("inputAmount"),
   })
 
   const onClickMax: MouseEventHandler<HTMLButtonElement> = () => {
@@ -59,53 +56,10 @@ export const Swap: FC = () => {
       shouldTouch: true,
       shouldValidate: true,
     })
-    form.setValue(
-      "outputAmount",
-      getOutputForInput(inputTokenBalance?.formatted)
-    )
   }
 
   const onClickSwitch: MouseEventHandler<HTMLButtonElement> = () => {
-    const newInputAmount = form.getValues("outputAmount")
-    const newInputToken = form.getValues("outputToken")
-    const newOutputAmount = form.getValues("inputAmount")
-    const newOutputToken = form.getValues("inputToken")
-    form.setValue("inputAmount", newInputAmount, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    })
-    form.setValue("inputToken", newInputToken, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    })
-    form.setValue("outputAmount", newOutputAmount, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    })
-    form.setValue("outputToken", newOutputToken, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    })
-  }
-
-  const getOutputForInput = (valueString?: string) => {
-    const value = Number(valueString)
-    if (isNaN(value)) return "0.0"
-    return isDeposit
-      ? String(value * pspToEthRatio)
-      : String(value / pspToEthRatio)
-  }
-
-  const getInputForOutput = (valueString?: string) => {
-    const value = Number(valueString)
-    if (isNaN(value)) return "0.0"
-    return isDeposit
-      ? String(value / pspToEthRatio)
-      : String(value * pspToEthRatio)
+    form.reset({ inputAmount: "", inputToken: outputTokenAddr })
   }
 
   const preview = useVaultPreview({
@@ -113,6 +67,8 @@ export const Swap: FC = () => {
     amount: inputAmount,
     isDeposit,
   })
+  const previewFormatted = formatEther(preview.data ?? BigNumber.from(0))
+
   const isApproved = useIsTokenApproved({
     address: inputTokenAddr,
     amount: inputAmount,
@@ -163,24 +119,9 @@ export const Swap: FC = () => {
           <div className="relative mb-2 grid grid-cols-[1fr,auto] grid-rows-[1fr,auto] gap-y-1">
             <input
               type="text"
-              className="peer relative z-10 col-start-1 row-start-1 w-full bg-transparent px-4 pt-3 pb-1 text-3xl focus:outline-none"
+              className="peer relative z-10 col-start-1 row-start-1 w-full bg-transparent px-4 pt-3 pb-1 text-3xl placeholder:text-black focus:outline-none"
               placeholder="0.0"
               {...form.register("inputAmount", {
-                onChange: (e) => {
-                  if (e.target.value === "") {
-                    form.reset()
-                  } else {
-                    form.setValue(
-                      "outputAmount",
-                      getOutputForInput(e.target.value),
-                      {
-                        shouldDirty: true,
-                        shouldTouch: true,
-                        shouldValidate: true,
-                      }
-                    )
-                  }
-                },
                 validate: (valueString) => {
                   const value = Number(valueString)
                   if (isNaN(value) || valueString === "")
@@ -234,41 +175,34 @@ export const Swap: FC = () => {
           <div className="relative grid grid-cols-[1fr,auto] grid-rows-[1fr,auto] gap-y-1">
             <input
               type="text"
-              className="peer relative z-10 col-start-1 row-start-1 w-full bg-transparent px-4 pt-3 pb-1 text-3xl focus:outline-none"
-              placeholder="0.0"
-              {...form.register("outputAmount", {
-                onChange: (e) => {
-                  if (e.target.value === "") {
-                    form.reset()
-                  } else {
-                    form.setValue(
-                      "inputAmount",
-                      getInputForOutput(e.target.value),
-                      {
-                        shouldDirty: true,
-                        shouldTouch: true,
-                        shouldValidate: true,
-                      }
-                    )
-                  }
-                },
-                validate: (valueString) => {
-                  const value = Number(valueString)
-                  if (isNaN(value)) return "Enter an amount"
-                  return true
-                },
-              })}
+              className={clsxm(
+                "peer relative z-10 col-start-1 row-start-1 w-full bg-transparent px-4 pt-3 pb-1 text-3xl text-slate-400 focus:outline-none",
+                {
+                  "animate animate-pulse":
+                    preview.isLoading || preview.isFetching,
+                }
+              )}
+              value={previewFormatted}
+              disabled
             />
             <div className="relative z-10 col-start-2 row-start-1 flex items-center pr-3">
               <span className="mt-2 rounded-md bg-slate-300 px-3 py-1.5 font-bold">
                 <TokenSymbol address={outputTokenAddr} />
               </span>
             </div>
-            <div className="relative z-10 col-span-full col-start-1 row-start-2 flex items-center justify-between px-4 pb-2">
+            <div
+              className={clsxm(
+                "relative z-10 col-span-full col-start-1 row-start-2 flex items-center justify-between px-4 pb-2 text-slate-400",
+                {
+                  "animate animate-pulse":
+                    preview.isLoading || preview.isFetching,
+                }
+              )}
+            >
               {!isDeposit ? (
-                <UsdValueEth amount={form.watch("inputAmount")} />
+                <UsdValueEth amount={previewFormatted} />
               ) : (
-                <UsdValuePsp amount={form.watch("inputAmount")} />
+                <UsdValuePsp amount={previewFormatted} />
               )}
             </div>
             {/* focus styles */}
@@ -291,17 +225,18 @@ export const Swap: FC = () => {
 
         <Button
           isLoading={
-            writeApprove.isLoading ||
-            writeDeposit.isLoading ||
-            writeWithdraw.isLoading
+            form.formState.isValid &&
+            (writeApprove.isLoading ||
+              writeDeposit.isLoading ||
+              writeWithdraw.isLoading)
           }
           disabled={!form.formState.isValid}
         >
-          {form.formState.isDirty
+          {inputAmount !== ""
             ? form.formState.isValid
-              ? "Swap"
+              ? errorMessage ?? "Swap"
               : form.formState.errors.inputAmount?.message ?? "Enter an amount"
-            : errorMessage ?? "Enter an amount"}
+            : "Enter an amount"}
         </Button>
       </form>
     </div>

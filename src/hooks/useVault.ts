@@ -77,10 +77,10 @@ export function useVaultWithdraw({
   const { address: receiver } = useAccount()
   const value = parseEther(amount || "0")
   const prepare = usePrepareContractWrite({
-    abi: erc4626ABI,
+    abi: vaultAbi,
     address,
     functionName: "withdraw",
-    args: [value, receiver ?? "0x", receiver ?? "0x"],
+    args: [value, receiver ?? "0x"],
     enabled: enabled && !!receiver,
   })
   const write = useContractWrite(prepare.config)

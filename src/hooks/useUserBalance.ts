@@ -1,6 +1,12 @@
 import { Address, useAccount, useBalance } from "wagmi"
 
-export function useUserBalance({ address: token }: { address: Address }) {
+export function useUserBalance({
+  address: token,
+  onSuccess,
+}: {
+  address: Address
+  onSuccess?: () => void
+}) {
   const { address, isConnected } = useAccount()
-  return useBalance({ address, token, enabled: isConnected })
+  return useBalance({ address, token, enabled: isConnected, onSuccess })
 }
