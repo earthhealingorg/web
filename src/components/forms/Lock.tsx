@@ -2,6 +2,8 @@ import moment from "moment"
 import { FC, useMemo } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 
+import { Button } from "@/components/Button"
+
 type LockFormValues = {
   amount: string
   lockDate: string
@@ -97,20 +99,22 @@ export const Lock: FC = () => {
         </div>
 
         <div className="flex gap-2">
-          <button
-            className="mt-3 w-full rounded-lg bg-blue-500 p-2 font-bold text-white"
+          <Button
+            className="mt-3 w-full rounded-lg bg-blue-500 p-2 text-base font-bold text-white"
+            color="blue"
             onClick={form.handleSubmit(onCreateLock)}
             type="submit"
           >
             Create lock
-          </button>
-          <button
-            className="mt-3 w-full rounded-lg bg-blue-500 p-2 font-bold text-white"
+          </Button>
+          <Button
+            className="mt-3 w-full rounded-lg bg-blue-500 p-2 text-base font-bold text-white"
+            color="blue"
             onClick={form.handleSubmit(onExtendLock)}
             type="submit"
           >
             Extend lock
-          </button>
+          </Button>
         </div>
       </form>
     </div>

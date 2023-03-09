@@ -18,14 +18,19 @@ import { TokenSymbol, UsdValueEth, UsdValuePsp } from "@/components"
 import { Button } from "@/components/Button"
 import { TokenInput } from "@/components/forms/TokenInput"
 
-import { PEPE_ADDRESS, STETH_ADDRESS } from "@/constants"
+import { STETH_ADDRESS } from "@/constants"
+
+type SwapProps = {
+  enableWithdraw?: boolean
+  vaultAddress: Address
+}
 
 type SwapFormValues = {
   inputAmount: string
   inputToken: Address
 }
 
-export const Swap: FC = () => {
+export const Swap: FC<SwapProps> = ({ enableWithdraw, vaultAddress }) => {
   const form = useForm<SwapFormValues>({
     defaultValues: {
       inputAmount: "",
@@ -38,7 +43,7 @@ export const Swap: FC = () => {
   const isDeposit = form.watch("inputToken") === STETH_ADDRESS
   const inputAmount = form.watch("inputAmount")
   const inputTokenAddr = form.watch("inputToken")
-  const outputTokenAddr = isDeposit ? PEPE_ADDRESS : STETH_ADDRESS
+  const outputTokenAddr = isDeposit ? vaultAddress : STETH_ADDRESS
 
   const { data: inputTokenBalance } = useUserBalance({
     address: inputTokenAddr,
@@ -59,7 +64,7 @@ export const Swap: FC = () => {
   }
 
   const preview = useVaultPreview({
-    address: PEPE_ADDRESS,
+    address: vaultAddress,
     amount: inputAmount,
     enabled: form.formState.isValid,
     isDeposit,
@@ -69,22 +74,22 @@ export const Swap: FC = () => {
   const isApproved = useIsTokenApproved({
     address: inputTokenAddr,
     amount: inputAmount,
-    spender: PEPE_ADDRESS,
+    spender: vaultAddress,
     enabled: form.formState.isValid,
   })
   const writeApprove = useTokenApprove({
     address: inputTokenAddr,
     amount: inputAmount,
-    spender: PEPE_ADDRESS,
+    spender: vaultAddress,
     enabled: form.formState.isValid,
   })
   const writeDeposit = useVaultDeposit({
-    address: PEPE_ADDRESS,
+    address: vaultAddress,
     amount: inputAmount,
     enabled: form.formState.isValid && isDeposit && isApproved,
   })
   const writeWithdraw = useVaultWithdraw({
-    address: PEPE_ADDRESS,
+    address: vaultAddress,
     amount: inputAmount,
     enabled: form.formState.isValid && !isDeposit && isApproved,
   })
@@ -160,16 +165,19 @@ export const Swap: FC = () => {
             </div>
           </div>
 
-          <button
-            className="absolute left-1/2 top-1/2 z-20 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-lg bg-slate-400 text-slate-100 ring-4 ring-slate-100"
-            onClick={onClickSwitch}
-          >
-            <span className="sr-only">Switch</span>
-            <BiDownArrowAlt className="h-6 w-6" />
-          </button>
+          {enableWithdraw && (
+            <button
+              className="absolute left-1/2 top-1/2 z-20 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-lg bg-slate-400 text-slate-100 ring-4 ring-slate-100"
+              onClick={onClickSwitch}
+            >
+              <span className="sr-only">Switch</span>
+              <BiDownArrowAlt className="h-6 w-6" />
+            </button>
+          )}
         </div>
 
         <Button
+          color="blue"
           isLoading={
             form.formState.isValid &&
             (writeApprove.isLoading ||

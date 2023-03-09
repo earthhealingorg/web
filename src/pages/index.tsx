@@ -37,10 +37,16 @@ export default function HomePage() {
             </li>
           </ul>
 
-          <div className="mt-12 text-center">
+          <div className="mt-12 flex justify-center gap-3 text-center">
+            <Link
+              href="/ibco"
+              className="block w-36 rounded-lg bg-blue-500 px-3 py-2 text-lg text-white"
+            >
+              Sale
+            </Link>
             <Link
               href="/dashboard"
-              className="mx-auto block w-36 rounded-lg bg-blue-500 px-3 py-2 text-lg text-white"
+              className="block w-36 rounded-lg bg-blue-500 px-3 py-2 text-lg text-white"
             >
               Enter
             </Link>

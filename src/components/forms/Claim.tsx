@@ -2,6 +2,7 @@ import { FC } from "react"
 
 import { useClientLoadingState, useEthPrice, usePepeToEthRatio } from "@/hooks"
 
+import { Button } from "@/components/Button"
 import { Skeleton } from "@/components/Skeleton"
 import { TokenBalance } from "@/components/token"
 
@@ -96,11 +97,8 @@ const ClaimButton: FC = () => {
   }
 
   return (
-    <button
-      className="w-full rounded-lg bg-lime-300 p-2 font-bold"
-      onClick={onClaim}
-    >
+    <Button color="green" onClick={onClaim}>
       Claim
-    </button>
+    </Button>
   )
 }
