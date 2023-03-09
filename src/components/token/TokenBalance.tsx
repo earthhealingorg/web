@@ -1,7 +1,11 @@
 import { FC } from "react"
-import { Address, useAccount, useBalance } from "wagmi"
+import { Address } from "wagmi"
 
-import { useClientLoadingState, useIsClientReady } from "@/hooks"
+import {
+  useClientLoadingState,
+  useIsClientReady,
+  useUserBalance,
+} from "@/hooks"
 
 import { Skeleton } from "@/components/Skeleton"
 
@@ -9,19 +13,16 @@ type TokenBalanceProps = {
   address: Address
 }
 
-export const TokenBalance: FC<TokenBalanceProps> = ({ address: token }) => {
-  const { address, isConnected } = useAccount()
-  const { data: balance, ...tokenQuery } = useBalance({
+export const TokenBalance: FC<TokenBalanceProps> = ({ address }) => {
+  const { data: balance, ...tokenQuery } = useUserBalance({
     address,
-    token,
-    enabled: isConnected,
   })
   const isClientReady = useIsClientReady()
   const isLoading = useClientLoadingState(tokenQuery)
 
   return (
     <Skeleton isLoading={isLoading}>
-      {isClientReady && isConnected
+      {isClientReady
         ? isLoading
           ? "..."
           : balance?.formatted ?? "ERR"

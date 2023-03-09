@@ -21,11 +21,13 @@ export function useVaultTotalAssets({ address }: { address: Address }) {
 
 export function useVaultPreview({
   address,
+  enabled,
   amount,
   isDeposit,
 }: {
   address: Address
   amount: string
+  enabled: boolean
   isDeposit: boolean
 }) {
   const { address: receiver } = useAccount()
@@ -35,7 +37,7 @@ export function useVaultPreview({
     address,
     functionName: isDeposit ? "previewDeposit" : "previewWithdraw",
     args: [value],
-    enabled: !!receiver && amount !== "" && amount !== "0",
+    enabled: enabled && !!receiver,
   })
 }
 

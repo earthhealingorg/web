@@ -13,10 +13,12 @@ export function useIsTokenApproved({
   address,
   amount,
   spender,
+  enabled,
 }: {
   address: Address
   amount: string
   spender: Address
+  enabled: boolean
 }) {
   const { address: userAddress } = useAccount()
   const allowance = useContractRead({
@@ -24,7 +26,7 @@ export function useIsTokenApproved({
     address,
     functionName: "allowance",
     args: [userAddress ?? "0x", spender],
-    enabled: !!userAddress,
+    enabled: enabled && !!userAddress,
   })
   return address
     ? allowance.data?.gt(parseEther(amount || "0")) ?? false
@@ -35,10 +37,12 @@ export function useTokenApprove({
   address,
   amount,
   spender,
+  enabled,
 }: {
   address: Address
   amount: string
   spender: Address
+  enabled: boolean
 }) {
   const value = parseUnits(amount || "0")
   const prepare = usePrepareContractWrite({
@@ -46,6 +50,7 @@ export function useTokenApprove({
     address,
     functionName: "approve",
     args: [spender, value],
+    enabled,
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction(write.data?.hash)

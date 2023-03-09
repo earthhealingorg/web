@@ -61,6 +61,7 @@ export const Swap: FC = () => {
   const preview = useVaultPreview({
     address: PEPE_ADDRESS,
     amount: inputAmount,
+    enabled: form.formState.isValid,
     isDeposit,
   })
   const previewFormatted = formatEther(preview.data ?? BigNumber.from(0))
@@ -69,28 +70,24 @@ export const Swap: FC = () => {
     address: inputTokenAddr,
     amount: inputAmount,
     spender: PEPE_ADDRESS,
+    enabled: form.formState.isValid,
   })
   const writeApprove = useTokenApprove({
     address: inputTokenAddr,
     amount: inputAmount,
     spender: PEPE_ADDRESS,
+    enabled: form.formState.isValid,
   })
   const writeDeposit = useVaultDeposit({
     address: PEPE_ADDRESS,
     amount: inputAmount,
-    enabled: isDeposit && isApproved,
+    enabled: form.formState.isValid && isDeposit && isApproved,
   })
   const writeWithdraw = useVaultWithdraw({
     address: PEPE_ADDRESS,
     amount: inputAmount,
-    enabled: !isDeposit && isApproved,
+    enabled: form.formState.isValid && !isDeposit && isApproved,
   })
-
-  const errorMessage = preview.isError
-    ? "Error previewing"
-    : writeApprove.isError || writeDeposit.isError || writeWithdraw.isError
-    ? "Error preparing transaction"
-    : null
 
   const onSubmit: SubmitHandler<SwapFormValues> = () => {
     if (!isApproved) {
@@ -181,11 +178,15 @@ export const Swap: FC = () => {
           }
           disabled={!form.formState.isValid}
         >
-          {inputAmount !== ""
-            ? form.formState.isValid
-              ? errorMessage ?? "Swap"
-              : form.formState.errors.inputAmount?.message ?? "Enter an amount"
-            : "Enter an amount"}
+          {form.formState.isValid
+            ? preview.isError
+              ? "Error previewing swap"
+              : writeApprove.isError ||
+                writeDeposit.isError ||
+                writeWithdraw.isError
+              ? "Error preparing transaction"
+              : "Swap"
+            : form.formState.errors.inputAmount?.message ?? "Enter an amount"}
         </Button>
       </form>
     </>
