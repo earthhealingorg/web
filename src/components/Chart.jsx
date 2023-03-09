@@ -5,7 +5,6 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
-  XAxis,
   YAxis,
 } from "recharts"
 
@@ -16,25 +15,14 @@ for (let i = 0; i < 1000; i++) {
   data.push({ ether: numAt })
 }
 
-export default class Chrt extends PureComponent {
+export class Chart extends PureComponent {
   static demoUrl = "https://codesandbox.io/s/simple-area-chart-4ujxw"
 
   render() {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          width={500}
-          height={400}
-          data={data}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
+        <AreaChart width={500} height={400} data={data} margin={{ left: -10 }}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
           <YAxis />
           <Tooltip />
           <Area
