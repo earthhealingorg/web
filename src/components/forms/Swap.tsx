@@ -105,7 +105,7 @@ export const Swap: FC = () => {
   }
 
   return (
-    <div className="rounded-xl bg-slate-100 p-3">
+    <>
       <header className="mx-1 mb-2">
         <h1 className="text-lg font-bold">Swap</h1>
       </header>
@@ -188,6 +188,6 @@ export const Swap: FC = () => {
             : "Enter an amount"}
         </Button>
       </form>
-    </div>
+    </>
   )
 }
