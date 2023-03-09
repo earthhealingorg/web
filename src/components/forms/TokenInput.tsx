@@ -33,7 +33,7 @@ export const TokenInput: FC<TokenInputProps> = ({
 }) => {
   const { data: balance } = useUserBalance({
     address,
-    onSuccess: revalidateForm,
+    onSuccess: () => revalidateForm(),
   })
 
   const controller = useController({
@@ -42,13 +42,13 @@ export const TokenInput: FC<TokenInputProps> = ({
     rules: {
       validate: (valueString) => {
         const value = Number(valueString)
-        if (isNaN(value) || valueString === "") return "Enter an amount"
+        if (isNaN(value) || !valueString) return "Enter an amount"
         const valueSafe = String(value.toFixed(18))
         const valueParsed = parseEther(valueSafe)
         if ((balance?.value ?? BigNumber.from(0)).lt(valueParsed))
           return "Insufficient balance"
         if (valueParsed.lte(BigNumber.from(0))) return "Enter an amount"
-        return true
+        return undefined
       },
     },
   })
